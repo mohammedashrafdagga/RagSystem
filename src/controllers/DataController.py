@@ -28,18 +28,19 @@ class DataController(BaseController):
         clean_file_name = re.sub(r"[^\w.]", "", orig_file_name.strip())
         return clean_file_name.replace(" ", "_")
 
-    def generate_unique_filename(self, orig_file_name: str, project_id: str):
+    def generate_unique_filepath(self, orig_file_name: str, project_id: str):
         random_file_name = self.generate_random_string()
         project_dir_path = ProjectController().get_project_path(project_id=project_id)
         clean_file_name = self.get_clean_file_name(orig_file_name=orig_file_name)
+        random_key = random_file_name + "_" + clean_file_name
         new_file_path = os.path.join(
-            project_dir_path, random_file_name + " " + clean_file_name
+            project_dir_path, random_key
         )
         # check the name if in project dir path
         while os.path.exists(new_file_path):
             random_file_name = self.generate_random_string()
             new_file_path = os.path.join(
-                project_dir_path, random_file_name + " " + clean_file_name
+                project_dir_path, random_key
             )
 
-        return new_file_path
+        return new_file_path, random_key
